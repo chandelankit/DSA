@@ -36,3 +36,66 @@ void dfs(unordered_map<int,bool>&visited,unordered_map<int,list<int>>&adjList, v
         }
     }
 }
+
+vector<int> dijkstra(vector<vector<int>> &vec, int vertices, int edges, int source) {
+    //creating adjcacency list
+
+    unordered_map<int,list<pair<int,int>>>adjList;
+
+    for(int i=0;i<edges;i++){
+        int u = vec[i][0];
+        int v = vec[i][1];
+        int weight = vec[i][2];
+
+        adjList[u].push_back(make_pair(v,weight));
+        adjList[v].push_back(make_pair(u,weight));
+    }
+
+    //create a distance vector and initialize with int max
+
+    vector<int>distance(vertices,INT_MAX);
+
+    distance[source]=0;
+
+    //create a set of pairs and insert source with distance zero
+
+    set<pair<int,int>>s;
+
+    s.insert(make_pair(source,0));
+
+    while(!s.empty()){
+        //access top pair
+        auto top = *(s.begin());
+
+        //remove top
+        s.erase(s.begin());
+
+        //traverse neighbours
+
+        for(auto j : adjList[top.first]){
+
+            //update distance and the pair in the set
+            if(j.second + top.second < distance[j.first]){
+
+
+                //now remove pair if present to update it
+                auto found = s.find(make_pair(j.first,distance[j.first]));
+                if(found != s.end()){
+                    s.erase(found);
+                }
+
+                //update distance vector
+
+                distance[j.first]=j.second+top.second;
+
+                //push the pair (removing old if present and then adding this updates it)
+
+                s.insert(make_pair(j.first,distance[j.first]));
+
+            }
+        }
+
+    }
+    
+        return distance;
+}
